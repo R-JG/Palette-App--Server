@@ -21,5 +21,19 @@ paletteRouter.post('/', (request, response, next) => {
         .catch(error => next(error));
 });
 
+paletteRouter.delete('/:id', (request, response, next) => {
+    const id = request.params.id;
+    Palette
+        .findByIdAndDelete(id)
+        .then(deletedPalette => {
+            if (deletedPalette) {
+                response.status(204).end();
+            } else {
+                response.status(404).end();
+            };
+        })
+        .catch(error => next(error));
+});
+
 
 module.exports = paletteRouter;
