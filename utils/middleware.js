@@ -13,4 +13,9 @@ const unknownEndpoint = (request, response) => {
     response.status(404).json({ error: 'unknown endpoint' });
 };
 
-module.exports = { requestLogger, unknownEndpoint };
+const errorHandler = (error, request, response, next) => {
+    errorLog(error.message);
+    next(error);
+};
+
+module.exports = { requestLogger, unknownEndpoint, errorHandler };

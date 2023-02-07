@@ -1,7 +1,11 @@
 const paletteRouter = require('express').Router();
+const Palette = require('../models/palette');
 
-paletteRouter.get('/', (request, response) => {
-    response.send('<h1>TEST</h1>');
+paletteRouter.get('/', (request, response, next) => {
+    Palette
+        .find({})
+        .then(allPalettes => response.json(allPalettes))
+        .catch(error => next(error));
 });
 
 module.exports = paletteRouter;
