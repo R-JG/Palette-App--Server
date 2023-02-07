@@ -1,5 +1,5 @@
 const paletteRouter = require('express').Router();
-const Palette = require('../models/palette');
+const Palette = require('../models/Palette');
 
 
 paletteRouter.get('/', (request, response, next) => {

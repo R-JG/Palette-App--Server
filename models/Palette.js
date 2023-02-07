@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Color = require('./color');
+const Color = require('./Color');
 
 const paletteSchema = mongoose.Schema({
     name: {
