@@ -13,6 +13,7 @@ paletteRouter.post('/', (request, response, next) => {
     const body = request.body;
     const newPalette = new Palette({
         name: body.name || 'New Palette',
+        colorCode: body.colorCode || 'hex',
         colors: []
     });
     newPalette
@@ -21,12 +22,18 @@ paletteRouter.post('/', (request, response, next) => {
         .catch(error => next(error));
 });
 
-// put is setup for updating the name of the palette
 paletteRouter.put('/:id', (request, response, next) => {
+    const { name, colorCode } = request.body;
+    if (!name && !colorCode) {
+        return response.status(400).json(
+            { error: 'missing name or color code' });
+    };
+    const newPropsObj = {};
+    if (name) newPropsObj.name = name;
+    if (colorCode) newPropsObj.colorCode = colorCode;
     const id = request.params.id;
-    const newName = request.body.newData;
     Palette
-        .findByIdAndUpdate(id, {name: newName}, {new: true})
+        .findByIdAndUpdate(id, newPropsObj, {new: true})
         .then(updatedPalette => response.json(updatedPalette))
         .catch(error => next(error));
 });
@@ -44,6 +51,5 @@ paletteRouter.delete('/:id', (request, response, next) => {
         })
         .catch(error => next(error));
 });
-
 
 module.exports = paletteRouter;
