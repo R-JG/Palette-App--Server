@@ -21,6 +21,16 @@ paletteRouter.post('/', (request, response, next) => {
         .catch(error => next(error));
 });
 
+// put is setup for updating the name of the palette
+paletteRouter.put('/:id', (request, response, next) => {
+    const id = request.params.id;
+    const newName = request.body.newData;
+    Palette
+        .findByIdAndUpdate(id, {name: newName}, {new: true})
+        .then(updatedPalette => response.json(updatedPalette))
+        .catch(error => next(error));
+});
+
 paletteRouter.delete('/:id', (request, response, next) => {
     const id = request.params.id;
     Palette

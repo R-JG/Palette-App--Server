@@ -19,6 +19,7 @@ mongoose.connect(MONGO_URI)
 
 app.use(cors());
 app.use(middleware.requestLogger);
+app.use(express.static('dist'));
 app.use(express.json());
 
 app.use('/api/palette', paletteRouter);
