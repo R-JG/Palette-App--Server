@@ -6,11 +6,11 @@ router.get('/', paletteController.getAllPalettes);
 
 router.post('/', paletteController.createPalette);
 
-router.put('/:id', paletteController.updatePaletteNameOrColorCode);
+router.put('/:paletteId', paletteController.updatePaletteNameOrColorCode);
 
-router.delete('/:id', paletteController.deletePalette);
+router.delete('/:paletteId', paletteController.deletePalette);
 
-router.post('/:id/colors', paletteController.addColorToPalette);
+router.post('/:paletteId/colors', paletteController.addColorToPalette);
 
 router.delete('/:paletteId/colors/:colorId', paletteController.deleteColorFromPalette);
 

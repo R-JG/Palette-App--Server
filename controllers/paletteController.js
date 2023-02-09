@@ -23,6 +23,7 @@ exports.createPalette = (request, response, next) => {
 };
 
 exports.updatePaletteNameOrColorCode = (request, response, next) => {
+    const id = request.params.paletteId;
     const { name, colorCode } = request.body;
     if (!name && !colorCode) {
         return response.status(400).json(
@@ -33,7 +34,6 @@ exports.updatePaletteNameOrColorCode = (request, response, next) => {
     // at this point, if there is a color code included, 
     // I will run the code type conversion on the colors array in the palette.
     if (colorCode) newPropsObj.colorCode = colorCode;
-    const id = request.params.id;
     Palette
         .findByIdAndUpdate(id, newPropsObj, {new: true})
         .then(updatedPalette => response.json(updatedPalette))
@@ -41,7 +41,7 @@ exports.updatePaletteNameOrColorCode = (request, response, next) => {
 };
 
 exports.deletePalette = (request, response, next) => {
-    const id = request.params.id;
+    const id = request.params.paletteId;
     Palette
         .findByIdAndDelete(id)
         .then(deletedPalette => {
@@ -55,7 +55,7 @@ exports.deletePalette = (request, response, next) => {
 };
 
 exports.addColorToPalette = (request, response, next) => {
-    const paletteId = request.params.id;
+    const paletteId = request.params.paletteId;
     const colorData = request.body.color;
     if (!colorData || (typeof colorData !== 'string')) {
         return response.status(400).json({ 
