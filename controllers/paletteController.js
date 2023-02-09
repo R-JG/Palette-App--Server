@@ -65,11 +65,39 @@ exports.addColorToPalette = (request, response, next) => {
     Palette
         .findById(paletteId)
         .then(palette => {
+            if (!palette) return response.status(404).end();
             const newColor = new Color({
                 code: colorData, 
-                codeType: 'test'
+                // Hardcoded type:
+                codeType: 'hex'
             });
             palette.colors = palette.colors.concat(newColor);
+            palette
+                .save()
+                .then(updatedPalette => response.json(updatedPalette))
+                .catch(error => next(error));
+        });
+};
+
+exports.deleteColorFromPalette = (request, response, next) => {
+    const paletteId = request.params.paletteId;
+    const colorId = request.params.colorId;
+    if (!colorId) return response.status(400).json({ 
+        error: 'missing color id' 
+    });
+    Palette
+        .findById(paletteId)
+        .then(palette => {
+            if (!palette) return response.status(404).end();
+            const updatedColors = palette.colors.filter(color => 
+                color._id.toString() !== colorId
+            );
+            if (updatedColors.length === palette.colors.length) {
+                return response.status(404).json({ 
+                    error: 'color id does not match any color in this palette' 
+                });
+            };
+            palette.colors = updatedColors;
             palette
                 .save()
                 .then(updatedPalette => response.json(updatedPalette))

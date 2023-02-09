@@ -12,5 +12,7 @@ router.delete('/:id', paletteController.deletePalette);
 
 router.post('/:id/colors', paletteController.addColorToPalette);
 
+router.delete('/:paletteId/colors/:colorId', paletteController.deleteColorFromPalette);
+
 
 module.exports = router;
