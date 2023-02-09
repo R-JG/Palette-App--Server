@@ -53,3 +53,26 @@ exports.deletePalette = (request, response, next) => {
         })
         .catch(error => next(error));
 };
+
+exports.addColorToPalette = (request, response, next) => {
+    const paletteId = request.params.id;
+    const colorData = request.body.color;
+    if (!colorData || (typeof colorData !== 'string')) {
+        return response.status(400).json({ 
+            error: 'missing or malformatted color property' 
+        });
+    };
+    Palette
+        .findById(paletteId)
+        .then(palette => {
+            const newColor = new Color({
+                code: colorData, 
+                codeType: 'test'
+            });
+            palette.colors = palette.colors.concat(newColor);
+            palette
+                .save()
+                .then(updatedPalette => response.json(updatedPalette))
+                .catch(error => next(error));
+        });
+};
