@@ -1,15 +1,15 @@
-const paletteRouter = require('express').Router();
 const Palette = require('../models/Palette');
+const Color = require('../models/Color');
 
 
-paletteRouter.get('/', (request, response, next) => {
+exports.getAllPalettes = (request, response, next) => {
     Palette
         .find({})
         .then(allPalettes => response.json(allPalettes))
         .catch(error => next(error));
-});
+};
 
-paletteRouter.post('/', (request, response, next) => {
+exports.createPalette = (request, response, next) => {
     const body = request.body;
     const newPalette = new Palette({
         name: body.name || 'New Palette',
@@ -20,9 +20,9 @@ paletteRouter.post('/', (request, response, next) => {
         .save()
         .then(savedPalette => response.json(savedPalette))
         .catch(error => next(error));
-});
+};
 
-paletteRouter.put('/:id', (request, response, next) => {
+exports.updatePaletteNameOrColorCode = (request, response, next) => {
     const { name, colorCode } = request.body;
     if (!name && !colorCode) {
         return response.status(400).json(
@@ -30,15 +30,17 @@ paletteRouter.put('/:id', (request, response, next) => {
     };
     const newPropsObj = {};
     if (name) newPropsObj.name = name;
+    // at this point, if there is a color code included, 
+    // I will run the code type conversion on the colors array in the palette.
     if (colorCode) newPropsObj.colorCode = colorCode;
     const id = request.params.id;
     Palette
         .findByIdAndUpdate(id, newPropsObj, {new: true})
         .then(updatedPalette => response.json(updatedPalette))
         .catch(error => next(error));
-});
+};
 
-paletteRouter.delete('/:id', (request, response, next) => {
+exports.deletePalette = (request, response, next) => {
     const id = request.params.id;
     Palette
         .findByIdAndDelete(id)
@@ -50,6 +52,4 @@ paletteRouter.delete('/:id', (request, response, next) => {
             };
         })
         .catch(error => next(error));
-});
-
-module.exports = paletteRouter;
+};
