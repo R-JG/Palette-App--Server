@@ -13,7 +13,6 @@ exports.createPalette = (request, response, next) => {
     const body = request.body;
     const newPalette = new Palette({
         name: body.name || 'New Palette',
-        colorCode: body.colorCode || 'hex',
         colors: []
     });
     newPalette
@@ -22,28 +21,24 @@ exports.createPalette = (request, response, next) => {
         .catch(error => next(error));
 };
 
-exports.updatePaletteNameOrColorCode = (request, response, next) => {
-    const id = request.params.paletteId;
-    const { name, colorCode } = request.body;
-    if (!name && !colorCode) {
+exports.updatePaletteName = (request, response, next) => {
+    const paletteId = request.params.paletteId;
+    const name = request.body.name;
+    if (!name) {
         return response.status(400).json(
-            { error: 'missing name or color code' });
+            { error: 'missing name property' });
     };
-    const newPropsObj = {};
-    if (name) newPropsObj.name = name;
-    // at this point, if there is a color code included, 
-    // I will run the code type conversion on the colors array in the palette.
-    if (colorCode) newPropsObj.colorCode = colorCode;
+    const newPropsObj = { name };
     Palette
-        .findByIdAndUpdate(id, newPropsObj, {new: true})
+        .findByIdAndUpdate(paletteId, newPropsObj, {new: true})
         .then(updatedPalette => response.json(updatedPalette))
         .catch(error => next(error));
 };
 
 exports.deletePalette = (request, response, next) => {
-    const id = request.params.paletteId;
+    const paletteId = request.params.paletteId;
     Palette
-        .findByIdAndDelete(id)
+        .findByIdAndDelete(paletteId)
         .then(deletedPalette => {
             if (deletedPalette) {
                 response.status(204).end();
@@ -56,21 +51,18 @@ exports.deletePalette = (request, response, next) => {
 
 exports.addColorToPalette = (request, response, next) => {
     const paletteId = request.params.paletteId;
-    const colorData = request.body.color;
-    if (!colorData || (typeof colorData !== 'string')) {
+    const rgbColor = request.body.rgbColor;
+    if (!rgbColor.r || !rgbColor.g || !rgbColor.b) {
         return response.status(400).json({ 
-            error: 'missing or malformatted color property' 
+            error: 'missing or malformatted rgb color property' 
         });
     };
     Palette
         .findById(paletteId)
         .then(palette => {
             if (!palette) return response.status(404).end();
-            const newColor = new Color({
-                code: colorData, 
-                // Hardcoded type:
-                codeType: 'hex'
-            });
+            const { r, g, b } = rgbColor;
+            const newColor = new Color({ r, g, b });
             palette.colors = palette.colors.concat(newColor);
             palette
                 .save()
@@ -82,9 +74,6 @@ exports.addColorToPalette = (request, response, next) => {
 exports.deleteColorFromPalette = (request, response, next) => {
     const paletteId = request.params.paletteId;
     const colorId = request.params.colorId;
-    if (!colorId) return response.status(400).json({ 
-        error: 'missing color id' 
-    });
     Palette
         .findById(paletteId)
         .then(palette => {

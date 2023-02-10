@@ -6,7 +6,7 @@ router.get('/', paletteController.getAllPalettes);
 
 router.post('/', paletteController.createPalette);
 
-router.put('/:paletteId', paletteController.updatePaletteNameOrColorCode);
+router.put('/:paletteId', paletteController.updatePaletteName);
 
 router.delete('/:paletteId', paletteController.deletePalette);
 

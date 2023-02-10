@@ -1,12 +1,22 @@
 const mongoose = require('mongoose');
 
 const colorSchema = mongoose.Schema({
-    code: {
-        type: String,
+    r: {
+        type: Number,
+        min: 0,
+        max: 255,
         required: true
     },
-    codeType: {
-        type: String,
+    g: {
+        type: Number,
+        min: 0,
+        max: 255,
+        required: true
+    },
+    b: {
+        type: Number,
+        min: 0,
+        max: 255,
         required: true
     }
 });

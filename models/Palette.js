@@ -5,9 +5,6 @@ const paletteSchema = mongoose.Schema({
     name: {
         type: String
     },
-    colorCode: {
-        type: String
-    },
     colors: [Color.schema]
 });
 
